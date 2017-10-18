@@ -1,5 +1,4 @@
-﻿
-function onEdit(e)
+﻿function onEdit(e)
 {
    SpreadsheetApp.getActiveSheet().getRange('Z1').setValue(Math.random());
 }
