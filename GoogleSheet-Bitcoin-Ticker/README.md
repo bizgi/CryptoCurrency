@@ -2,7 +2,7 @@
 Simple code takes last price of currencies from Bitfinex.
 
 ## Installation
-- Just copy the code and paste it to <i>Tools > Script Editor</i> in Google Sheet. 
+- Just copy the code in GoogleSheetBitcoinTicker.js and paste it to <i>Tools > Script Editor</i> in Google Sheet. 
 - Save project as "Bitfinex" name and close Script Editor.
 
 ## Calling Bitfinex function
