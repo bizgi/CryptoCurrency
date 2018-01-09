@@ -10,32 +10,10 @@ Created on Mon Jan  8 22:44:02 2018
 
 import ccxt
 import time
+import _thread
 
 def calc():
-    """
-    Bitfinex 
-    
-    bitfinex = ccxt.bitfinex()
-    markets = bitfinex.load_markets ()
-    
-    orderbook = bitfinex.fetch_order_book ('BTC/USD')
-    bid = orderbook['bids'][0][0] if len (orderbook['bids']) > 0 else None
-    ask = orderbook['asks'][0][0] if len (orderbook['asks']) > 0 else None
-    spread = (ask - bid) if (bid and ask) else None
-    print (bitfinex.id, 'market price', { 'bid': bid, 'ask': ask, 'spread': spread })
-    
-    
-    Cex.io 
-     
-    
-    cex = ccxt.cex()
-    
-    orderbook = cex.fetch_order_book ('BTC/USD')
-    bid = orderbook['bids'][0][0] if len (orderbook['bids']) > 0 else None
-    ask = orderbook['asks'][0][0] if len (orderbook['asks']) > 0 else None
-    spread = (ask - bid) if (bid and ask) else None
-    print (cex.id, 'market price', { 'bid': bid, 'ask': ask, 'spread': spread })
-    """
+
     
     bitfinex = ccxt.bitfinex()
     cex = ccxt.cex()
@@ -46,11 +24,8 @@ def calc():
     
     FEE = 1.02 # fee for every trade (2%)
     Diff = 0.5 # 1 % arbitrage to execute
-    curr = ["NEO/BTC", "ETH/BTC", "LTC/BTC", "OMG/BTC", "QTUM/BTC", "XEM/BTC"] #currencies to trade if arbitrage is found
+    curr = ["NEO/BTC", ] #   "ETH/BTC", "LTC/BTC", "OMG/BTC", "QTUM/BTC", "XEM/BTC"          currencies to trade if arbitrage is found
     exc = [bitfinex, cex, kucoin, poloniex, bittrex] #exchanges to trade on for the function calls
-    
-    
-    
     
     
     def getAsk(market, sym):
@@ -62,17 +37,10 @@ def calc():
         orderbook = market.fetch_order_book(sym)
         bid = orderbook['bids'][0][0] if len (orderbook['bids']) > 0 else None
         return bid  
-     
-    
-    aa = getAsk(exc[0], curr[0])
-    bb = getBid(cex, 'BTC/USD')
-    
-    #print ('cex BTC/USD ask:', aa, 'Cex bid', bb)
-    
+
     
     def compare():
     	print ("Arbitrage Trader starting up...")
-    	pairpart2 = "btc"
     
     	n=0
     	while n<=(len(curr)-1):
@@ -106,7 +74,7 @@ def calc():
     					print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
     					print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
     					print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
-    					print ("net kar" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
+    					print ("profit %" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
     				else:
     					try:
     						sprice = getBid(exc[k], curr[n])
@@ -120,12 +88,10 @@ def calc():
     						print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
     						print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
     						print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
-    						print ("net kar" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
+    						print ("profit %" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
     				k+=1
     			m+=1
     		n+=1
-
-
 
 
 
@@ -133,25 +99,30 @@ def calc():
 
 
 
-calc()
 
 
-"""
-def my_timer(*args):
-    calc()
-    return True# do ur work here, but not for long
+def main():
+	"""main function, called at the start of the program"""
+ 
+	def run1(sleeptime, lock):
+		while True:
+			lock.acquire()
+			calc() #The main Arbitrage function
+			print ("Round completed sleeping for 10 seconds")
+			lock.release()
+			time.sleep(sleeptime)
+ 
+	lock = _thread.allocate_lock()
+	_thread.start_new_thread(run1, (10, lock))
+ 
+	while True:
+		pass
 
-gtk.timeout_add(60*1000, my_timer) # call every min
-"""
+if __name__ == "__main__":
+    main()
 
 
-"""
-delay =2
-for symbol in bitfinex.markets:
-    print (bitfinex.fetch_order_book ('BTC/USD'))
-    time.sleep (delay) # rate limit
-    
-"""
+
 
 """
 
