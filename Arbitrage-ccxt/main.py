@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jan  8 22:44:02 2018
-
+ggg
 
 """
+
+
 
 import ccxt
 import time
