@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Jan  8 22:44:02 2018
-ggg
+
+
 
 """
 
@@ -9,7 +10,6 @@ ggg
 
 import ccxt
 import time
- 
 
 def calc():
     """
@@ -46,8 +46,8 @@ def calc():
     
     FEE = 1.02 # fee for every trade (2%)
     Diff = 0.5 # 1 % arbitrage to execute
-    curr = ["NEO/BTC", "ETH/BTC", "LTC/BTC"] #currencies to trade if arbitrage is found
-    exc = [bitfinex,cex,kucoin,poloniex, bittrex] #exchanges to trade on for the function calls
+    curr = ["NEO/BTC", "ETH/BTC", "LTC/BTC", "OMG/BTC", "QTUM/BTC", "XEM/BTC"] #currencies to trade if arbitrage is found
+    exc = [bitfinex, cex, kucoin, poloniex, bittrex] #exchanges to trade on for the function calls
     
     
     
@@ -103,8 +103,8 @@ def calc():
     					# make_trade(exc[m], "buy", amount1, pairpart1, "btc", bprice)
                         # make_trade(exc[k], "sell", amount1, pairpart1, "btc", sprice)
                         #printouts for debugging
-    					print ("price on " , exc[m] , " for " , curr[n] , " is " , str(sprice) , " BTC")
-    					print ("price on " , exc[k] , " for " , curr[n] , " is " , str(bprice) , " BTC")
+    					print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
+    					print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
     					print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
     					print ("net kar" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
     				else:
@@ -117,8 +117,8 @@ def calc():
     						# make_trade(exc[k], "buy", amount1, pairpart1, "btc", bprice)
     						# make_trade(exc[m], "sell", amount1, pairpart1, "btc", sprice)
     						#printouts for debugging
-    						print ("price on " , exc[k] , " for " , curr[n] , " is " , str(sprice) , " BTC")
-    						print ("price on " , exc[m] , " for " , curr[n] , " is " , str(bprice) , " BTC")
+    						print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
+    						print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
     						print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
     						print ("net kar" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
     				k+=1
@@ -135,7 +135,15 @@ def calc():
 
 calc()
 
-		
+
+"""
+def my_timer(*args):
+    calc()
+    return True# do ur work here, but not for long
+
+gtk.timeout_add(60*1000, my_timer) # call every min
+"""
+
 
 """
 delay =2
