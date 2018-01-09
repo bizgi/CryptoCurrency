@@ -69,8 +69,8 @@ def calc():
     					
     				if (((float(sprice) - float(bprice))/float(sprice))*100.0 > Diff):
     					# make_trade(exc[m], "buy", amount1, pairpart1, "btc", bprice)
-                        # make_trade(exc[k], "sell", amount1, pairpart1, "btc", sprice)
-                        #printouts for debugging
+                    # make_trade(exc[k], "sell", amount1, pairpart1, "btc", sprice)
+                    #printouts for debugging
     					print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
     					print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
     					print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
