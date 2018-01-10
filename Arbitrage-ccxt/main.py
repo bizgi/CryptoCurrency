@@ -16,6 +16,9 @@ def calc():
 
     
     bitfinex = ccxt.bitfinex()
+    marketsBf = bitfinex.load_markets ()
+    
+    
     cex = ccxt.cex()
     kucoin = ccxt.kucoin()
     poloniex=ccxt.poloniex()
@@ -23,9 +26,9 @@ def calc():
     
     
     FEE = 1.02 # fee for every trade (2%)
-    Diff = 0.5 # 1 % arbitrage to execute
-    curr = ["NEO/BTC", ] #   "ETH/BTC", "LTC/BTC", "OMG/BTC", "QTUM/BTC", "XEM/BTC"          currencies to trade if arbitrage is found
-    exc = [bitfinex, cex, kucoin, poloniex, bittrex] #exchanges to trade on for the function calls
+    Diff = 0.6 # 1 % arbitrage to execute
+    curr = ["ETH/BTC", "OMG/BTC" ] #  "LTC/BTC", "DASH/BTC", "ETC/BTC", "OMG/BTC", "BCH/BTC"     currencies to trade if arbitrage is found
+    exc = [bitfinex, kucoin] #  cex ,kucoin , bittrex   exchanges to trade on for the function calls
     
     
     def getAsk(market, sym):
@@ -59,8 +62,8 @@ def calc():
     				except Exception:
     					pass
     
-    				#print ("Sell price = " , str(sprice) , " on " , exc[m])
-    				#print ("Buy price  = " , str(bprice) , " on " , exc[k])
+    				#print ("Sell price = " , str(sprice) , " on " , exc[m].id)
+    				#print ("Buy price  = " , str(bprice) , " on " , exc[k].id)
     				
     				if (float(bprice) < float(sprice)):
     					#print ("Opportunity to buy " , curr[n] , " for ", str(bprice), " on ",exc[k]," and sell for " , str(sprice) , " on " , exc[m])
@@ -73,8 +76,8 @@ def calc():
                     #printouts for debugging
     					print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
     					print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
-    					print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
-    					print ("profit %" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
+    					print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * 0.998)-(bprice * 1.002004)),8)) , "BTC")
+    					print ("profit %" , str(round(100*(((sprice+bprice)+(sprice * 0.998)-bprice*1.002004)-(sprice+bprice))/(sprice+bprice),2)))
     				else:
     					try:
     						sprice = getBid(exc[k], curr[n])
@@ -87,8 +90,8 @@ def calc():
     						#printouts for debugging
     						print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
     						print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
-    						print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * FEE)-(bprice * Diff * FEE)),8)) , "BTC")
-    						print ("profit %" , str(round(100*((sprice * 0.998)-(bprice * 1.002))/(sprice * 0.998),8)))
+    						print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * 0.998)-(bprice * 1.002004)),8)) , "BTC")
+    						print ("profit %" , str(round(100*(((sprice+bprice)+(sprice * 0.998)-bprice*1.002004)-(sprice+bprice))/(sprice+bprice),2)))
     				k+=1
     			m+=1
     		n+=1
@@ -108,12 +111,12 @@ def main():
 		while True:
 			lock.acquire()
 			calc() #The main Arbitrage function
-			print ("Round completed sleeping for 10 seconds")
+			print ("Round completed sleeping for 30 seconds")
 			lock.release()
 			time.sleep(sleeptime)
  
 	lock = _thread.allocate_lock()
-	_thread.start_new_thread(run1, (10, lock))
+	_thread.start_new_thread(run1, (30, lock))
  
 	while True:
 		pass
