@@ -102,11 +102,10 @@ def calc():
 
 
 
-
+"""
 
 def main():
-	"""main function, called at the start of the program"""
- 
+	 
 	def run1(sleeptime, lock):
 		while True:
 			lock.acquire()
@@ -123,6 +122,21 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+
+delay = 20
+while 1<2:
+    try:
+        calc()
+        print ("sleep 10")
+        time.sleep(delay)
+    except:
+        pass
+        print("hıamina")
+        time.sleep(20)
+        
+    
 
 
 
