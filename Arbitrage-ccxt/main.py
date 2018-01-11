@@ -12,8 +12,8 @@ import ccxt
 import time
 import _thread
 
-def calc():
 
+def calc():
 
 	bitfinex = ccxt.bitfinex()
 	marketsBf = bitfinex.load_markets ()
@@ -27,8 +27,8 @@ def calc():
 
 	FEE = 1.02 # fee for every trade (2%)
 	Diff = 0.6 # 1 % arbitrage to execute
-	curr = ["ETH/BTC", "OMG/BTC" ] #  "LTC/BTC", "DASH/BTC", "ETC/BTC", "OMG/BTC", "BCH/BTC"     currencies to trade if arbitrage is found
-	exc = [bitfinex, kucoin] #  cex ,kucoin , bittrex   exchanges to trade on for the function calls
+	curr = ["ETH/BTC", "OMG/BTC", "LTC/BTC", "DASH/BTC", "ETC/BTC", "OMG/BTC"] #  "LTC/BTC", "DASH/BTC", "ETC/BTC", "OMG/BTC", "BCH/BTC"     currencies to trade if arbitrage is found
+	exc = [bitfinex, kucoin, bittrex, cex] #  cex ,kucoin , bittrex   exchanges to trade on for the function calls
 
 
 	def getAsk(market, sym):
@@ -44,7 +44,9 @@ def calc():
 
 	def compare():
 		print ("Arbitrage Trader starting up...")
-
+		yon_file = open("yon.txt", "r")
+		yon = yon_file.read()
+		yon_file.close
 		n=0
 		while n<=(len(curr)-1):
 			print ("Starting Arbitrage checking for ", curr[n])
@@ -56,8 +58,12 @@ def calc():
 				while k<=(len(exc)-1):
 					#print "k = " + str(k)
 					try:
-						sprice = getBid(exc[m], curr[n])
-						bprice = getAsk(exc[k], curr[n])
+						if (yon == "1"):
+							sprice = getBid(exc[m], curr[n])
+							bprice = getAsk(exc[k], curr[n])
+						else:
+							sprice = getBid(exc[k], curr[n])
+							bprice = getAsk(exc[m], curr[n])
 
 					except Exception:
 							pass
@@ -71,8 +77,8 @@ def calc():
 						#print ("Yield before trading costs would be: ",str(yie),"%")
 
 					if (((float(sprice) - float(bprice))/float(sprice))*100.0 > Diff):
-						# make_trade(exc[m], "buy", amount1, pairpart1, "btc", bprice)
-						# make_trade(exc[k], "sell", amount1, pairpart1, "btc", sprice)
+						# make_trade(exc[k], "buy", amount1, pairpart1, "btc", bprice)
+						# make_trade(exc[m], "sell", amount1, pairpart1, "btc", sprice)
 						#printouts for debugging
 						print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
 						print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
@@ -82,26 +88,17 @@ def calc():
 						with open("log.txt", "a") as text_file:
 							print(f"{curr[n]}      {exc[m].id}      {sprice}    Sell", file=text_file)
 							print(f"{curr[n]}      {exc[k].id}      {bprice}    Buy", file=text_file)
-							print(f"--------------- Profit % {profit} ---------------\n", file=text_file)
-					else:
-						try:
-							sprice = getBid(exc[k], curr[n])
-							bprice = getAsk(exc[m], curr[n])
-						except Exception:
-							pass
-						if (((float(sprice) - float(bprice))/float(sprice))*100.0 > Diff):
-							# make_trade(exc[k], "buy", amount1, pairpart1, "btc", bprice)
-							# make_trade(exc[m], "sell", amount1, pairpart1, "btc", sprice)
-							#printouts for debugging
-							print ("price on " , exc[k].id , " for " , curr[n] , " is " , str(sprice) , " BTC")
-							print ("price on " , exc[m].id , " for " , curr[n] , " is " , str(bprice) , " BTC")
-							print ("executing trade at a win per 1" , curr[n] , " of " , str(round(((sprice * 0.998)-(bprice * 1.002004)),8)) , "BTC")
-							profit =  str(round(100*(((sprice+bprice)+(sprice * 0.998)-bprice*1.002004)-(sprice+bprice))/(sprice+bprice),2))
-							print ("profit %" , profit)
-							with open("log.txt", "a") as text_file:
-								print(f"{curr[n]}      {exc[k].id}      {sprice}    Sell", file=text_file)
-								print(f"{curr[n]}      {exc[m].id}      {bprice}    Buy", file=text_file)
-								print(f"--------------- Profit % {profit} ---------------**************\n", file=text_file)
+							print(f"-{exc[k].id}'den alındı {exc[m].id} 'de satıldı-----yön:{yon}------- Profit % {profit}\n", file=text_file)
+							print (f" yön: {yon}")
+							text_file.close
+						yon_filer = open("yon.txt", "w")
+						if yon == "1":
+							yon_filer.write("0")
+						else:
+							yon_filer.write("1")
+						yon_filer.close
+
+
 					k+=1
 				m+=1
 			n+=1
@@ -109,6 +106,8 @@ def calc():
 
 
 	compare()
+
+
 
 
 
@@ -135,6 +134,8 @@ if __name__ == "__main__":
 
 """
 
+
+
 delay = 20
 while 1<2:
 	try:
@@ -145,7 +146,6 @@ while 1<2:
 		pass
 		print("hıamina")
 		time.sleep(20)
-
 
 
 
